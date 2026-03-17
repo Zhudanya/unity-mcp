@@ -94,7 +94,7 @@ openupm add com.coplaydev.unity-mcp
 * **可扩展** — 可与多种 MCP Client 配合使用
 
 ### 可用工具
-`apply_text_edits` • `batch_execute` • `create_script` • `debug_request_context` • `delete_script` • `execute_custom_tool` • `execute_menu_item` • `find_gameobjects` • `find_in_file` • `get_sha` • `get_test_job` • `manage_animation` • `manage_asset` • `manage_camera` • `manage_components` • `manage_editor` • `manage_gameobject` • `manage_graphics` • `manage_material` • `manage_packages` • `manage_prefabs` • `manage_probuilder` • `manage_scene` • `manage_script` • `manage_script_capabilities` • `manage_scriptable_object` • `manage_shader` • `manage_texture` • `manage_tools` • `manage_ui` • `manage_vfx` • `read_console` • `refresh_unity` • `run_tests` • `script_apply_edits` • `set_active_instance` • `unity_docs` • `unity_reflect` • `validate_script`
+`apply_text_edits` • `batch_execute` • `create_script` • `debug_request_context` • `delete_script` • `editor_ui_automation` 🆕 • `execute_custom_tool` • `execute_menu_item` • `find_gameobjects` • `find_in_file` • `get_sha` • `get_test_job` • `manage_2d` 🆕 • `manage_animation` • `manage_asset` • `manage_audio` 🆕 • `manage_build` 🆕 • `manage_camera` • `manage_components` • `manage_editor` • `manage_gameobject` • `manage_graphics` • `manage_material` • `manage_navigation` 🆕 • `manage_packages` • `manage_physics` 🆕 • `manage_prefabs` • `manage_probuilder` • `manage_scene` • `manage_script` • `manage_script_capabilities` • `manage_scriptable_object` • `manage_shader` • `manage_terrain` 🆕 • `manage_texture` • `manage_timeline` 🆕 • `manage_tools` • `manage_ui` • `manage_vfx` • `read_console` • `refresh_unity` • `run_tests` • `script_apply_edits` • `set_active_instance` • `unity_docs` • `unity_reflect` • `validate_script`
 
 ### 可用资源
 `cameras` • `custom_tools` • `renderer_features` • `rendering_stats` • `volumes` • `editor_active_tool` • `editor_prefab_stage` • `editor_selection` • `editor_state` • `editor_windows` • `gameobject` • `gameobject_api` • `gameobject_component` • `gameobject_components` • `get_tests` • `get_tests_for_mode` • `menu_items` • `prefab_api` • `prefab_hierarchy` • `prefab_info` • `project_info` • `project_layers` • `project_tags` • `tool_groups` • `unity_instances`
@@ -263,3 +263,168 @@ Coplay 提供 3 个 Unity AI 工具：
 ## 免责声明
 
 本项目是一个免费开源的 Unity Editor 工具，与 Unity Technologies 无关。
+
+---
+
+## Fork 增强功能
+
+本 Fork 在上游 MCP for Unity 基础上新增了 **8 个工具（70 个 Actions）**，覆盖编辑器 UI 自动化和主要缺失的游戏开发子系统。
+
+### 新增工具
+
+#### 🖱️ `editor_ui_automation` — 编辑器 UI 自动化
+
+让 AI 能看到并操作 Unity 编辑器窗口 — 同时支持 UIElements 和 IMGUI 窗口。
+
+| Action | 说明 |
+|--------|------|
+| `snapshot` | 捕获编辑器所有窗口的 UI 树，为可交互元素分配 `@e1, @e2` 引用（仅 UIElements） |
+| `screenshot` | 截取任意窗口为 base64 PNG 图片 — IMGUI 窗口也能用 |
+| `click` | 通过引用点击 UI 元素 |
+| `type` | 输入文字或发送按键（Enter、Tab、Ctrl+S 等） |
+| `drag` | 拖拽元素或资产到目标位置 |
+| `send_event` | 向指定坐标发送原始鼠标/键盘事件 — 兼容 IMGUI |
+| `focus_window` | 按标题聚焦指定编辑器窗口 |
+
+**两种工作流：**
+- **UIElements 窗口：** `snapshot` → 通过 `@eN` 引用进行 `click`/`type`/`drag`
+- **IMGUI 窗口：** `screenshot` → AI 分析截图 → 通过坐标 `send_event`
+
+---
+
+#### 🔨 `manage_build` — 构建发布
+
+| Action | 说明 |
+|--------|------|
+| `get_player_settings` | 读取公司名、包标识符、版本号、脚本后端等 |
+| `set_player_settings` | 更新 PlayerSettings |
+| `get_build_settings` | 获取构建场景列表和当前目标平台 |
+| `set_build_scenes` | 设置构建场景列表 |
+| `switch_platform` | 切换目标平台（含 Domain Reload 恢复机制） |
+| `build` | 执行 BuildPipeline.BuildPlayer |
+| `get_scripting_defines` | 读取宏定义符号 |
+| `set_scripting_defines` | 设置宏定义符号 |
+
+---
+
+#### ⚡ `manage_physics` — 物理系统
+
+| Action | 说明 |
+|--------|------|
+| `raycast` / `raycast_all` | 射线检测，返回碰撞点/法线/距离/碰撞体信息 |
+| `overlap` | 球形/盒形范围检测 |
+| `create_physics_material` | 创建物理材质资产 |
+| `get_settings` / `set_settings` | 读写全局物理设置（通过 SerializedObject 持久化） |
+| `configure_rigidbody` | 一步配置 Rigidbody（质量、阻力、运动学、碰撞检测） |
+| `configure_collider` | 添加/配置 Box/Sphere/Capsule/Mesh 碰撞体 |
+| `configure_joint` | 添加/配置 Fixed/Hinge/Spring 关节 |
+
+---
+
+#### 🗺️ `manage_navigation` — 导航寻路
+
+同时支持旧版 NavMeshBuilder（内置）和新版 AI Navigation 包（NavMeshSurface）。
+
+| Action | 说明 |
+|--------|------|
+| `bake` | 烘焙导航网格（可配置 Agent 参数） |
+| `clear` | 清除所有烘焙数据 |
+| `get_settings` | 读取导航区域和烘焙设置 |
+| `set_area` | 配置区域名称和通行代价 |
+| `configure_agent` | 配置 NavMeshAgent 属性 |
+| `configure_obstacle` | 配置 NavMeshObstacle（含 Carving） |
+| `add_offmesh_link` | 创建离网连接 |
+| `test_path` | 计算两点间路径，返回路径点和总距离 |
+
+---
+
+#### ⛰️ `manage_terrain` — 地形系统
+
+工具组：`terrain`（通过 `manage_tools` 激活）
+
+| Action | 说明 |
+|--------|------|
+| `create` | 创建 Terrain + TerrainData |
+| `set_heightmap` | 从文件导入高度图（RAW16/PNG/EXR） |
+| `export_heightmap` | 导出高度图到 RAW16 文件 |
+| `get_heightmap` | 读取区域高度值（最大 64×64） |
+| `raise_lower` | 在指定位置升降地形 |
+| `smooth` | 在指定位置平滑地形 |
+| `add_terrain_layer` / `paint_texture` | 添加纹理层并绘制 |
+| `add_tree_prototype` / `paint_trees` | 注册树预制体并种植 |
+| `add_detail_prototype` / `paint_details` | 注册草/细节并种植 |
+| `set_properties` / `get_info` | 配置地形属性和查看信息 |
+
+---
+
+#### 🔊 `manage_audio` — 音频系统
+
+| Action | 说明 |
+|--------|------|
+| `configure_source` | 一步配置 AudioSource（音频片段、音量、空间混合、循环等） |
+| `get_info` | 读取 AudioSource 当前状态 |
+| `set_import_settings` | 配置 AudioClip 导入设置（压缩格式、加载方式、采样率） |
+| `play` / `stop` / `pause` | 播放控制（仅在 Play Mode 下有效） |
+| `create_mixer` | 创建 AudioMixer 资产（实验性，使用内部 API） |
+
+---
+
+#### 🎬 `manage_timeline` — 时间轴
+
+工具组：`timeline`（需安装 `com.unity.timeline` 包）
+
+| Action | 说明 |
+|--------|------|
+| `create_asset` | 创建 TimelineAsset |
+| `add_track` / `remove_track` | 添加/移除轨道（Animation、Audio、Activation 等） |
+| `add_clip` / `set_clip_properties` | 放置和配置片段 |
+| `set_binding` | 通过 PlayableDirector 将轨道绑定到场景对象 |
+| `get_info` | 读取时间轴结构（轨道、片段、时长） |
+| `add_marker` | 添加 SignalEmitter 标记 |
+
+---
+
+#### 🎮 `manage_2d` — 2D 工具
+
+工具组：`2d`（需要 Tilemap 模块）
+
+| Action | 说明 |
+|--------|------|
+| `tilemap_set_tile` | 在网格位置放置/清除 Tile |
+| `tilemap_fill` | 填充矩形区域 |
+| `tilemap_clear` | 清除整个 Tilemap |
+| `tilemap_get_info` | 获取 Tilemap 边界和大小信息 |
+| `create_sprite_atlas` | 创建 SpriteAtlas 资产 |
+| `atlas_add_folders` | 添加文件夹到图集 |
+| `atlas_pack` | 打包所有图集 |
+
+---
+
+### 兼容性
+
+| 功能 | 要求 |
+|------|------|
+| 编辑器 UI 自动化（UIElements） | Unity 2021.3+ |
+| 编辑器 UI 自动化（IMGUI 截图 + send_event） | Unity 2021.3+ |
+| 构建管线 | Unity 2021.3+ |
+| 物理系统（射线检测、范围检测、物理材质） | Unity 2021.3+ |
+| 导航系统（旧版 NavMeshBuilder） | Unity 2021.3+（内置） |
+| 导航系统（NavMeshSurface） | 需安装 `com.unity.ai.navigation` 包 |
+| 地形系统 | Unity 2021.3+（内置） |
+| 音频（AudioSource、导入设置） | Unity 2021.3+ |
+| 音频（Mixer 创建） | Unity 2021.3+（实验性，内部 API） |
+| 时间轴 | 需安装 `com.unity.timeline` 包 |
+| 2D Tilemap | 需要 `com.unity.2d.tilemap` 模块（2D 项目内置） |
+| 2D SpriteAtlas | Unity 2021.3+ |
+
+### 已知限制
+
+| 限制 | 详情 |
+|------|------|
+| IMGUI 窗口 | 无法枚举元素 — 需用 `screenshot` + `send_event` 通过坐标操作 |
+| `switch_platform` | 触发 Domain Reload，可能短暂断开 MCP 连接 |
+| 音频播放 | `play`/`stop`/`pause` 仅在 Play Mode 下有效 |
+| AudioMixer 编辑 | 实验性功能 — 使用内部 API，不同 Unity 版本可能不兼容 |
+| 地形高度图 | 大数据仅支持文件导入/导出，不支持 JSON 数组传输 |
+| Timeline | 需要安装 `com.unity.timeline` 包 |
+| 可选包依赖 | 运行时通过反射检测 — 缺少包不会导致编译报错 |

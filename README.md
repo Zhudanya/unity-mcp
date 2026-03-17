@@ -94,7 +94,7 @@ openupm add com.coplaydev.unity-mcp
 * **Extensible** — Works with various MCP Clients
 
 ### Available Tools
-`apply_text_edits` • `batch_execute` • `create_script` • `debug_request_context` • `delete_script` • `execute_custom_tool` • `execute_menu_item` • `find_gameobjects` • `find_in_file` • `get_sha` • `get_test_job` • `manage_animation` • `manage_asset` • `manage_camera` • `manage_components` • `manage_editor` • `manage_gameobject` • `manage_graphics` • `manage_material` • `manage_packages` • `manage_prefabs` • `manage_probuilder` • `manage_scene` • `manage_script` • `manage_script_capabilities` • `manage_scriptable_object` • `manage_shader` • `manage_texture` • `manage_tools` • `manage_ui` • `manage_vfx` • `read_console` • `refresh_unity` • `run_tests` • `script_apply_edits` • `set_active_instance` • `unity_docs` • `unity_reflect` • `validate_script`
+`apply_text_edits` • `batch_execute` • `create_script` • `debug_request_context` • `delete_script` • `editor_ui_automation` 🆕 • `execute_custom_tool` • `execute_menu_item` • `find_gameobjects` • `find_in_file` • `get_sha` • `get_test_job` • `manage_2d` 🆕 • `manage_animation` • `manage_asset` • `manage_audio` 🆕 • `manage_build` 🆕 • `manage_camera` • `manage_components` • `manage_editor` • `manage_gameobject` • `manage_graphics` • `manage_material` • `manage_navigation` 🆕 • `manage_packages` • `manage_physics` 🆕 • `manage_prefabs` • `manage_probuilder` • `manage_scene` • `manage_script` • `manage_script_capabilities` • `manage_scriptable_object` • `manage_shader` • `manage_terrain` 🆕 • `manage_texture` • `manage_timeline` 🆕 • `manage_tools` • `manage_ui` • `manage_vfx` • `read_console` • `refresh_unity` • `run_tests` • `script_apply_edits` • `set_active_instance` • `unity_docs` • `unity_reflect` • `validate_script`
 
 ### Available Resources
 `cameras` • `custom_tools` • `renderer_features` • `rendering_stats` • `volumes` • `editor_active_tool` • `editor_prefab_stage` • `editor_selection` • `editor_state` • `editor_windows` • `gameobject` • `gameobject_api` • `gameobject_component` • `gameobject_components` • `get_tests` • `get_tests_for_mode` • `menu_items` • `prefab_api` • `prefab_hierarchy` • `prefab_info` • `project_info` • `project_layers` • `project_tags` • `tool_groups` • `unity_instances`
@@ -221,6 +221,171 @@ See [README-DEV.md](docs/development/README-DEV.md) for development setup. For c
 
 1. Fork → Create issue → Branch (`feature/your-idea`) → Make changes → PR
 </details>
+
+---
+
+## Fork Enhancements
+
+This fork adds **8 new tools (70 actions)** on top of the upstream MCP for Unity, covering Editor UI automation and major missing game development subsystems. See [中文版](docs/i18n/README-zh.md) for Chinese documentation.
+
+### New Tools
+
+#### 🖱️ `editor_ui_automation` — Editor UI Automation
+
+Lets AI see and interact with Unity Editor windows — both modern UIElements and legacy IMGUI windows.
+
+| Action | Description |
+|--------|------------|
+| `snapshot` | Capture a text tree of all Editor windows with `@e1, @e2` element references (UIElements) |
+| `screenshot` | Capture any window as base64 PNG image — works with IMGUI |
+| `click` | Click a UI element by reference |
+| `type` | Type text or send keys (Enter, Tab, Ctrl+S) |
+| `drag` | Drag elements or assets between UI targets |
+| `send_event` | Send raw mouse/keyboard events by coordinates — works with IMGUI |
+| `focus_window` | Focus an Editor window by title |
+
+**Two workflows:**
+- **UIElements windows:** `snapshot` → `click`/`type`/`drag` by `@eN` reference
+- **IMGUI windows:** `screenshot` → AI analyzes image → `send_event` by coordinates
+
+---
+
+#### 🔨 `manage_build` — Build Pipeline
+
+| Action | Description |
+|--------|------------|
+| `get_player_settings` | Read company name, bundle ID, version, scripting backend |
+| `set_player_settings` | Update PlayerSettings |
+| `get_build_settings` | Get scenes in build and current platform |
+| `set_build_scenes` | Set the scene list for build |
+| `switch_platform` | Switch build target (with Domain Reload recovery) |
+| `build` | Execute BuildPipeline.BuildPlayer |
+| `get_scripting_defines` | Read #define symbols |
+| `set_scripting_defines` | Set #define symbols |
+
+---
+
+#### ⚡ `manage_physics` — Physics System
+
+| Action | Description |
+|--------|------------|
+| `raycast` / `raycast_all` | Cast rays and get hit info |
+| `overlap` | Find colliders in sphere/box region |
+| `create_physics_material` | Create PhysicMaterial asset |
+| `get_settings` / `set_settings` | Read/write global physics (persistent via SerializedObject) |
+| `configure_rigidbody` | Set mass, drag, kinematic, collision detection in one call |
+| `configure_collider` | Add/configure Box/Sphere/Capsule/Mesh colliders |
+| `configure_joint` | Add/configure Fixed/Hinge/Spring joints |
+
+---
+
+#### 🗺️ `manage_navigation` — NavMesh
+
+Supports both legacy NavMeshBuilder and the new AI Navigation package.
+
+| Action | Description |
+|--------|------------|
+| `bake` | Bake NavMesh with agent settings |
+| `clear` | Clear baked NavMesh data |
+| `get_settings` | Read navigation areas and bake settings |
+| `set_area` | Configure area name and cost |
+| `configure_agent` | Set NavMeshAgent properties |
+| `configure_obstacle` | Set NavMeshObstacle with carving |
+| `add_offmesh_link` | Create OffMeshLink |
+| `test_path` | Calculate path and return waypoints + distance |
+
+---
+
+#### ⛰️ `manage_terrain` — Terrain System
+
+Group: `terrain` (activate via `manage_tools`)
+
+| Action | Description |
+|--------|------------|
+| `create` | Create Terrain + TerrainData |
+| `set_heightmap` | Import from RAW16/PNG/EXR file |
+| `export_heightmap` | Export to RAW16 file |
+| `get_heightmap` | Read height values for a region (max 64×64) |
+| `raise_lower` | Raise/lower at position with radius |
+| `smooth` | Smooth terrain at position |
+| `add_terrain_layer` / `paint_texture` | Add and paint texture layers |
+| `add_tree_prototype` / `paint_trees` | Register and place trees |
+| `add_detail_prototype` / `paint_details` | Register and place grass/details |
+| `set_properties` / `get_info` | Configure and inspect terrain |
+
+---
+
+#### 🔊 `manage_audio` — Audio System
+
+| Action | Description |
+|--------|------------|
+| `configure_source` | Set AudioSource properties in one call |
+| `get_info` | Read AudioSource state |
+| `set_import_settings` | Configure AudioClip import (compression, load type) |
+| `play` / `stop` / `pause` | Playback control (Play Mode only) |
+| `create_mixer` | Create AudioMixer asset (experimental) |
+
+---
+
+#### 🎬 `manage_timeline` — Timeline
+
+Group: `timeline` (requires `com.unity.timeline` package)
+
+| Action | Description |
+|--------|------------|
+| `create_asset` | Create TimelineAsset |
+| `add_track` / `remove_track` | Add/remove tracks (Animation, Audio, Activation, etc.) |
+| `add_clip` / `set_clip_properties` | Place and configure clips |
+| `set_binding` | Bind track to scene object via PlayableDirector |
+| `get_info` | Read timeline structure |
+| `add_marker` | Add SignalEmitter marker |
+
+---
+
+#### 🎮 `manage_2d` — 2D Tools
+
+Group: `2d` (requires Tilemap module)
+
+| Action | Description |
+|--------|------------|
+| `tilemap_set_tile` | Place/clear a tile at grid position |
+| `tilemap_fill` | Fill rectangular region |
+| `tilemap_clear` | Clear entire Tilemap |
+| `tilemap_get_info` | Get Tilemap bounds |
+| `create_sprite_atlas` | Create SpriteAtlas asset |
+| `atlas_add_folders` | Add folders to atlas |
+| `atlas_pack` | Pack all atlases |
+
+---
+
+### Compatibility
+
+| Feature | Requirements |
+|---------|-------------|
+| Editor UI Automation (UIElements) | Unity 2021.3+ |
+| Editor UI Automation (IMGUI screenshot + send_event) | Unity 2021.3+ |
+| Build Pipeline | Unity 2021.3+ |
+| Physics (Raycast, Overlap, Materials) | Unity 2021.3+ |
+| Navigation (Legacy NavMeshBuilder) | Unity 2021.3+ (built-in) |
+| Navigation (NavMeshSurface) | `com.unity.ai.navigation` package |
+| Terrain | Unity 2021.3+ (built-in) |
+| Audio (Source, Import Settings) | Unity 2021.3+ |
+| Audio (Mixer creation) | Unity 2021.3+ (experimental, internal API) |
+| Timeline | `com.unity.timeline` package |
+| 2D Tilemap | `com.unity.2d.tilemap` module (built-in for 2D projects) |
+| 2D SpriteAtlas | Unity 2021.3+ |
+
+### Limitations
+
+| Limitation | Details |
+|------------|---------|
+| IMGUI windows | Cannot enumerate elements — use `screenshot` + `send_event` by coordinates |
+| `switch_platform` | Triggers Domain Reload, may temporarily disconnect MCP |
+| Audio playback | `play`/`stop`/`pause` only work in Play Mode |
+| AudioMixer editing | Experimental — uses internal API, may break across Unity versions |
+| Terrain heightmap | Large data transfer via file only, not JSON arrays |
+| Timeline | Requires `com.unity.timeline` package installed |
+| Optional packages | Detected at runtime via reflection — no compilation errors if missing |
 
 <details>
 <summary><strong>Telemetry & Privacy</strong></summary>

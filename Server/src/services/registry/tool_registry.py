@@ -24,6 +24,9 @@ TOOL_GROUPS: dict[str, str] = {
     "scripting_ext": "ScriptableObject management",
     "testing": "Test runner & async test jobs",
     "probuilder": "ProBuilder 3D modeling – requires com.unity.probuilder package",
+    "terrain": "Terrain heightmap editing, texture painting, tree & detail placement",
+    "timeline": "Timeline asset, track & clip management – requires com.unity.timeline",
+    "2d": "2D tools – Tilemap, Sprite Atlas – requires 2D Tilemap module",
 }
 
 DEFAULT_ENABLED_GROUPS: set[str] = {"core"}
