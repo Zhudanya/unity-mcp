@@ -10,6 +10,7 @@ from transport.legacy.unity_connection import async_send_command_with_retry
 
 
 @mcp_for_unity_tool(
+    group="navigation",
     description=(
         "Navigation and pathfinding tools: NavMesh baking, path testing, agent/obstacle configuration. "
         "Supports both legacy NavMeshBuilder and new AI Navigation package (NavMeshSurface). "

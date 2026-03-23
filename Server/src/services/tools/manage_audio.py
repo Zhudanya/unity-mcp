@@ -10,6 +10,7 @@ from transport.legacy.unity_connection import async_send_command_with_retry
 
 
 @mcp_for_unity_tool(
+    group="audio",
     description=(
         "Audio system tools: configure AudioSource, set clip import settings, playback control. "
         "Actions: "

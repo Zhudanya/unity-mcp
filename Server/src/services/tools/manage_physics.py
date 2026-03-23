@@ -10,6 +10,7 @@ from transport.legacy.unity_connection import async_send_command_with_retry
 
 
 @mcp_for_unity_tool(
+    group="physics",
     description=(
         "Physics system tools: raycast, overlap queries, physics material creation, "
         "global physics settings, and rigidbody/collider/joint configuration. "
