@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace MCPForUnity.Editor.Tools.Build
 {
-    [McpForUnityTool("manage_build", AutoRegister = false, Group = "core")]
+    [McpForUnityTool("manage_build", AutoRegister = false, Group = "build")]
     public static class ManageBuild
     {
         private const string PrefKey_PendingSwitchPlatform = "MCP_PendingSwitchPlatform";

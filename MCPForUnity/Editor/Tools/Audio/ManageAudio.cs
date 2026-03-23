@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace MCPForUnity.Editor.Tools.Audio
 {
-    [McpForUnityTool("manage_audio", AutoRegister = false, Group = "core")]
+    [McpForUnityTool("manage_audio", AutoRegister = false, Group = "audio")]
     public static class ManageAudio
     {
         // Runtime detection for AudioMixer internal API

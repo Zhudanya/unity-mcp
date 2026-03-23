@@ -10,7 +10,7 @@ using UnityEngine.AI;
 
 namespace MCPForUnity.Editor.Tools.Navigation
 {
-    [McpForUnityTool("manage_navigation", AutoRegister = false, Group = "core")]
+    [McpForUnityTool("manage_navigation", AutoRegister = false, Group = "navigation")]
     public static class ManageNavigation
     {
         // Runtime detection: new AI Navigation package (NavMeshSurface)
