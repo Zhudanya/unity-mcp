@@ -350,7 +350,7 @@ namespace MCPForUnity.Editor.Tools.Build
             {
                 platform = group.ToString(),
                 defines = defineList,
-                raw = defines,
+                raw = string.Join(";", defineList),
             });
         }
 
