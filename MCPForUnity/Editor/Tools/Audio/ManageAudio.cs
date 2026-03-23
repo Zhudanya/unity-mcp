@@ -224,8 +224,9 @@ namespace MCPForUnity.Editor.Tools.Audio
 
             if (@params["preload_audio_data"] != null || @params["preloadAudioData"] != null)
             {
-                importer.preloadAudioData = (bool?)@params["preload_audio_data"]
+                var preload = (bool?)@params["preload_audio_data"]
                     ?? (bool?)@params["preloadAudioData"] ?? true;
+                settings.preloadAudioData = preload;
                 changed = true;
             }
 

@@ -818,28 +818,19 @@ namespace MCPForUnity.Editor.Tools
 
         private static void DispatchPointerClick(VisualElement element, Vector2 position, int clickCount)
         {
-            using (var moveEvt = PointerMoveEvent.GetPooled(
-                new Vector3(position.x, position.y, 0),
-                new Vector3(position.x, position.y, 0),
-                0, 0, 0, EventModifiers.None))
+            using (var moveEvt = PointerMoveEvent.GetPooled())
             {
                 moveEvt.target = element;
                 element.SendEvent(moveEvt);
             }
 
-            using (var downEvt = PointerDownEvent.GetPooled(
-                new Vector3(position.x, position.y, 0),
-                new Vector3(position.x, position.y, 0),
-                0, clickCount, 0, EventModifiers.None))
+            using (var downEvt = PointerDownEvent.GetPooled())
             {
                 downEvt.target = element;
                 element.SendEvent(downEvt);
             }
 
-            using (var upEvt = PointerUpEvent.GetPooled(
-                new Vector3(position.x, position.y, 0),
-                new Vector3(position.x, position.y, 0),
-                0, clickCount, 0, EventModifiers.None))
+            using (var upEvt = PointerUpEvent.GetPooled())
             {
                 upEvt.target = element;
                 element.SendEvent(upEvt);
@@ -890,10 +881,7 @@ namespace MCPForUnity.Editor.Tools
             Vector2 from, Vector2 to, int steps)
         {
             // Press at source
-            using (var downEvt = PointerDownEvent.GetPooled(
-                new Vector3(from.x, from.y, 0),
-                new Vector3(from.x, from.y, 0),
-                0, 1, 0, EventModifiers.None))
+            using (var downEvt = PointerDownEvent.GetPooled())
             {
                 downEvt.target = source;
                 source.SendEvent(downEvt);
@@ -906,10 +894,7 @@ namespace MCPForUnity.Editor.Tools
                 var pos = Vector2.Lerp(from, to, t);
                 var currentTarget = i <= steps / 2 ? source : target;
 
-                using (var moveEvt = PointerMoveEvent.GetPooled(
-                    new Vector3(pos.x, pos.y, 0),
-                    new Vector3(pos.x - (to.x - from.x) / steps, pos.y - (to.y - from.y) / steps, 0),
-                    0, 1, 0, EventModifiers.None))
+                using (var moveEvt = PointerMoveEvent.GetPooled())
                 {
                     moveEvt.target = currentTarget;
                     currentTarget.SendEvent(moveEvt);
@@ -917,10 +902,7 @@ namespace MCPForUnity.Editor.Tools
             }
 
             // Release at target
-            using (var upEvt = PointerUpEvent.GetPooled(
-                new Vector3(to.x, to.y, 0),
-                new Vector3(to.x, to.y, 0),
-                0, 1, 0, EventModifiers.None))
+            using (var upEvt = PointerUpEvent.GetPooled())
             {
                 upEvt.target = target;
                 target.SendEvent(upEvt);

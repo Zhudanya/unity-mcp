@@ -334,17 +334,17 @@ namespace MCPForUnity.Editor.Tools.Build
             var p = new ToolParams(@params);
             var group = GetTargetGroup(p);
 
-            string defines;
+            string[] defineList;
 #if UNITY_2021_2_OR_NEWER
             var namedTarget = UnityEditor.Build.NamedBuildTarget.FromBuildTargetGroup(group);
-            PlayerSettings.GetScriptingDefineSymbols(namedTarget, out defines);
+            PlayerSettings.GetScriptingDefineSymbols(namedTarget, out string[] definesArray);
+            defineList = definesArray ?? Array.Empty<string>();
 #else
-            defines = PlayerSettings.GetScriptingDefineSymbolsForGroup(group);
-#endif
-
-            var defineList = string.IsNullOrEmpty(defines)
+            var defines = PlayerSettings.GetScriptingDefineSymbolsForGroup(group);
+            defineList = string.IsNullOrEmpty(defines)
                 ? Array.Empty<string>()
                 : defines.Split(';').Where(d => !string.IsNullOrWhiteSpace(d)).ToArray();
+#endif
 
             return new SuccessResponse("Scripting defines retrieved.", new
             {
